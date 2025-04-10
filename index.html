@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><script>window.huggingface={variables:{"SPACE_CREATOR_USER_ID":"67dc1e2632aedc68c4d17b08"}};</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtFund - 艺术活动众筹平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+        
+        .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* 添加平滑过渡效果 */
+    }
+
+    .card-hover:hover {
+        transform: scale(1.05); /* 放大效果 */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* 增加阴影 */
+    }
+
+           /* 确保鼠标悬停在触发元素或浮窗时，浮窗保持显示 */
+    .group:hover .group-hover\:opacity-100 {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .group:hover .group-hover\:visible {
+        visibility: visible;
+    }
+
+    .group-hover\:opacity-100 {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    /* 调整浮窗样式 */
+        .group-hover\:block {
+            width: 2000px; /* 浮窗宽度 */
+            background-color: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+            padding: 20px; /* 内边距 */
+        }
+
+    /* 按钮容器样式 */
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap; /* 自动换行 */
+            gap: 12px; /* 按钮之间的间距 */
+        }
+
+    /* 按钮样式 */
+        .flex-1 {
+            flex: 1 1 1 1 calc(50% - 12px); /* 每行最多显示两个按钮 */
+        text-align: center;
+        }
+
+         /* 仅限制浮窗内的按钮布局 */
+        .floating-buttons {
+        display: flex;
+        flex-wrap: wrap; /* 自动换行 */
+        gap: 12px; /* 按钮之间的间距 */
+        }
+
+        .floating-buttons .flex-1 {
+        flex: 1 1 1 1 calc(50% - 12px); /* 每行最多显示两个按钮 */
+        text-align: center;
+        }
+
+        .floating-window {
+        width: 2000px; /* 设置浮窗宽度为 400px */
+        max-width: 90%; /* 确保在小屏幕上不会超出视口宽度 */
+        background-color: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+        padding: 20px; /* 内边距 */
+        border-radius: 10px; /* 圆角 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影 */
+    }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        
+        .artwork-card {
+            transition: all 0.3s ease;
+            background-size: cover;
+            background-position: center;
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .artwork-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+        }
+
+        .card-container {
+        padding: 2rem; /* 增加卡片周围的内边距 */
+    }
+        
+        .artwork-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            color: white;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .creator-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #6a11cb;
+        }
+        
+        .backer-count {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .modal-content {
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .search-bar {
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .search-bar:focus-within {
+            max-width: 400px;
+        }
+
+        /* Page transition */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Project detail layout */
+        .project-detail-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .project-detail-container {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .container {
+            max-width: 1200px; /* 限制宽度 */
+            margin: 0 auto; /* 居中 */
+            padding: 0 1rem; /* 内边距 */
+        }
+
+    /* 针对特定部分的容器样式 */
+    section.py-16 {
+        margin: 0 auto; /* 居中 */
+    }
+
+        /* Guidelines page */
+        .guideline-section {
+            margin-bottom: 3rem;
+        }
+        
+        .guideline-section h3 {
+            border-bottom: 2px solid #6a11cb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex justify-between items-center mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-palette text-2xl"></i>
+                        <span class="text-xl font-bold">ArtFund</span>
+                    </div>
+                    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="search-bar relative flex-grow">
+                        <input type="text" placeholder="搜索艺术项目..." class="w-full pl-10 pr-4 py-2 rounded-full text-gray-900 focus:outline-none">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                    </div>
+                    <button class="px-4 py-2 rounded-full bg-white text-indigo-600 font-medium hover:bg-gray-100 transition">
+                        登录/注册
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+                <div class="search-bar relative mb-4">
+                    <input type="text" placeholder="搜索艺术项目..." class="w-full pl-10 pr-4 py-2 rounded-full text-gray-900 focus:outline-none">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                </div>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="home">首页</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="explore">探索项目</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="create">发起项目</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="success">成功案例</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="about">关于我们</a>
+                <button class="w-full mt-2 px-4 py-2 rounded-full bg-white text-indigo-600 font-medium hover:bg-gray-100 transition">
+                    登录/注册
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主页面 -->
+    <div id="home" class="page active">
+        <!-- 分类浏览 -->
+        <section class="py-4 bg-white shadow-sm">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    <!-- 音乐演出 -->
+                    <div class="relative group">
+                        <button onclick="location.href='category-filter.html?primary=music'" class="text-center p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer w-full h-full">
+                            <div class="category-icon bg-purple-100 text-purple-600 mx-auto">
+                                <i class="fas fa-music text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold">音乐演出</h3>
+                            <p class="text-sm text-gray-500 mt-1">音乐会、演唱会、Livehouse</p>
+                        </button>
+                    
+                        <!-- 浮窗 -->
+                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-96 bg-white shadow-lg rounded-lg p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="location.href='category-filter.html?filter=classical'" class="py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                    古典音乐
+                                </button>
+                                <button onclick="location.href='category-filter.html?filter=classical'" class="py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                    流行音乐
+                                </button>
+                                <button onclick="location.href='category-filter.html?filter=classical'" class="py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                    摇滚音乐
+                                </button>
+                                <button onclick="location.href='category-filter.html?filter=classical'" class="py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                    爵士音乐
+                                </button>
+                                <button onclick="location.href='category-filter.html?filter=classical'" class="py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                    动漫音乐
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer" data-category="art">
+                        <div class="category-icon bg-blue-100 text-blue-600 mx-auto">
+                            <i class="fas fa-paint-brush text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold">美术展览</h3>
+                        <p class="text-sm text-gray-500 mt-1">画作、雕塑、装置</p>
+                    </div>
+                    
+                    <div class="text-center p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer" data-category="theater">
+                        <div class="category-icon bg-green-100 text-green-600 mx-auto">
+                            <i class="fas fa-theater-masks text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold">戏剧表演</h3>
+                        <p class="text-sm text-gray-500 mt-1">话剧、舞剧、歌剧、音乐剧</p>
+                    </div>
+                    
+                    <div class="text-center p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer" data-category="anime">
+                        <div class="category-icon bg-yellow-100 text-yellow-600 mx-auto">
+                            <i class="fas fa-film text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold">动漫展会</h3>
+                        <p class="text-sm text-gray-500 mt-1">漫展、同人展、COSPLAY</p>
+                    </div>
+                    
+                    <div class="text-center p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer" data-category="online">
+                        <div class="category-icon bg-pink-100 text-pink-600 mx-auto">
+                            <i class="fas fa-video text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold">线上活动</h3>
+                        <p class="text-sm text-gray-500 mt-1">直播演出、线上展览</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 英雄区域 -->
+        <section class="gradient-bg text-white py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6">让艺术梦想照进现实</h1>
+                        <p class="text-xl mb-8">ArtFund是专注于艺术活动的众筹平台，帮助音乐人、美术家、戏剧表演者等艺术家筹集资金，实现创作梦想，为我们的生活提供更多富有创意的艺术活动。</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button class="px-8 py-3 bg-white text-indigo-600 rounded-full font-bold hover:bg-gray-100 transition">
+                                支持项目
+                            </button>
+                            <button onclick="location.href='create-project.html'" class="px-8 py-3 border-2 border-white text-white rounded-full font-bold hover:bg-white hover:bg-opacity-10 transition">
+                                发起项目
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <div class="relative w-full max-w-md">
+                            <div class="absolute -top-10 -left-10 w-32 h-32 bg-yellow-400 rounded-full opacity-20"></div>
+                            <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-pink-400 rounded-full opacity-20"></div>
+                            <div class="relative bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-2xl p-6 shadow-xl">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-purple-300 flex items-center justify-center">
+                                        <i class="fas fa-music text-purple-700"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="font-bold">仲夏夜梦音乐节·2025</h3>
+                                        <p class="text-sm opacity-80">中央音乐学院管弦系乐团</p>
+                                    </div>
+                                </div>
+                                <div class="progress-bar mb-4">
+                                    <div class="progress-fill" style="width: 72%"></div>
+                                </div>
+                                <div class="flex justify-between text-sm mb-4">
+                                    <span>已筹 ¥300,000</span>
+                                    <span>目标 ¥500,000</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex -space-x-2">
+                                        <img src="https://randomuser.me/api/portraits/women/12.jpg" class="w-8 h-8 rounded-full border-2 border-white">
+                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-8 h-8 rounded-full border-2 border-white">
+                                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-8 h-8 rounded-full border-2 border-white">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-xs font-bold">+89</div>
+                                    </div>
+                                    <button class="px-8 py-3 border-2 border-white text-white rounded-full font-bold hover:bg-white hover:bg-opacity-10 transition">
+                                        支持项目
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 精选项目 -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-3xl font-bold">精选艺术项目</h2>
+                    <a href="all-projects.html" class="text-indigo-600 font-medium hover:underline px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                        查看全部 <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 项目卡片1 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover transition duration-300">
+                        <div class="relative">
+                            <div class="artwork-card" style="background-image: url('https://cdn.pixabay.com/photo/2022/06/16/10/42/orchestra-7265635_1280.jpg')">
+                                <div class="creator-badge">
+                                    <i class="fas fa-user-edit mr-1"></i> LiDi
+                                </div>
+                                <div class="backer-count">
+                                    <i class="fas fa-users mr-1"></i> 128支持者
+                                </div>
+                                <div class="artwork-content">
+                                    <h3 class="font-bold text-xl">仲夏夜梦音乐节·2025</h3>
+                                    <p class="text-sm opacity-90">中央音乐学院管弦乐团带来莫扎特、李斯特和门德尔松</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-500 text-sm">目标金额</p>
+                                    <p class="font-bold">¥500,000</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-500 text-sm">剩余时间</p>
+                                    <p class="font-bold">15天</p>
+                                </div>
+                            </div>
+                            <div class="progress-bar mb-4">
+                                <div class="progress-fill" style="width: 72%"></div>
+                                </div>
+                            <div class="flex justify-between text-sm mb-6">
+                                <span>已筹 ¥300,000</span>
+                                <span>60%</span>
+                            </div>
+                            <button onclick="location.href='project-detail.html?id=summer-music-festival'" class="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                支持项目
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 项目卡片2 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover transition duration-300">
+                        <div class="relative">
+                            <div class="artwork-card" style="background-image: url('https://images.unsplash.com/photo-1547891654-e66ed7ebb968?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')">
+                                <div class="creator-badge">
+                                    <i class="fas fa-user-edit mr-1"></i> 创作者
+                                </div>
+                                <div class="backer-count">
+                                    <i class="fas fa-users mr-1"></i> 89支持者
+                                </div>
+                                <div class="artwork-content">
+                                    <h3 class="font-bold text-xl">当代水墨艺术展</h3>
+                                    <p class="text-sm opacity-90">探索传统与创新的边界</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-500 text-sm">目标金额</p>
+                                    <p class="font-bold">¥50,000</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-500 text-sm">剩余时间</p>
+                                    <p class="font-bold">22天</p>
+                                </div>
+                            </div>
+                            <div class="progress-bar mb-4">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm mb-6">
+                                <span>已筹 ¥22,500</span>
+                                <span>45%</span>
+                            </div>
+                            <button onclick="location.href='project-detail.html?id=ink-art-exhibition'" class="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                支持项目
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 项目卡片3 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover transition duration-300">
+                        <div class="relative">
+                            <div class="artwork-card" style="background-image: url('https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')">
+                                <div class="creator-badge">
+                                    <i class="fas fa-user-edit mr-1"></i> 创作者
+                                </div>
+                                <div class="backer-count">
+                                    <i class="fas fa-users mr-1"></i> 203支持者
+                                </div>
+                                <div class="artwork-content">
+                                    <h3 class="font-bold text-xl">原创话剧《城市边缘》</h3>
+                                    <p class="text-sm opacity-90">讲述都市青年的生活困境</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-500 text-sm">目标金额</p>
+                                    <p class="font-bold">¥80,000</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-500 text-sm">剩余时间</p>
+                                    <p class="font-bold">8天</p>
+                                </div>
+                            </div>
+                            <div class="progress-bar mb-4">
+                                <div class="progress-fill" style="width: 92%"></div>
+                            </div>
+                            <div class="flex justify-between text-sm mb-6">
+                                <span>已筹 ¥73,600</span>
+                                <span>92%</span>
+                            </div>
+                            <button onclick="location.href='project-detail.html?id=city-edge-drama'" class="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                                支持项目
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 完成众筹，即将上演 -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-12">
+                    <div class="flex items-center">
+    <h2 class="text-3xl font-bold">完成众筹，即将上演</h2>
+    <!-- 问号图标 -->
+    <div class="relative group ml-4">
+        <i class="fas fa-question-circle text-indigo-600 text-2xl cursor-pointer"></i>
+        <!-- 浮窗 -->
+        <div class="absolute left-0 mt-4 w-80 bg-white text-gray-700 text-base rounded-lg shadow-xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-50">
+            <p class="font-bold text-lg">
+                若您已经以超过特定数额的资金支持过该项目，则您可在“预定门票”处免费获取该项目的门票。
+            </p>
+        </div>
+    </div>
+</div>
+                    <a href="fund-completed-coming-soon.html" class="text-indigo-600 font-medium hover:underline px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                        查看全部 <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- 卡片1 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover transition duration-300">
+                <div class="relative">
+                    <div class="artwork-card" style="background-image: url('https://cdn.pixabay.com/photo/2016/10/01/05/39/paris-1706910_1280.jpg')">
+                        <div class="creator-badge">
+                            <i class="fas fa-user-edit mr-1"></i> 张艺
+                        </div>
+                        <div class="backer-count">
+                            <i class="fas fa-users mr-1"></i> 150支持者
+                        </div>
+                        <div class="artwork-content">
+                            <h3 class="font-bold text-xl">德沃夏克大提琴协奏曲音乐会</h3>
+                            <p class="text-sm opacity-90">极致浪漫的音乐盛宴</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">演出时间</p>
+                            <p class="font-bold">2025年5月20日</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-500 text-sm">演出地点</p>
+                            <p class="font-bold">北京剧院</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between space-x-4">
+                        <button onclick="location.href='project-detail.html?id=summer-night-dream'" class="w-1/2 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                            查看项目
+                        </button>
+                        <button onclick="location.href='ticket-booking.html?id=summer-night-dream'" class="w-1/2 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition">
+                            预定门票
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片2 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover transition duration-300">
+                <div class="relative">
+                    <div class="artwork-card" style="background-image: url('https://cdn.pixabay.com/photo/2014/06/03/01/58/mixing-desk-360825_1280.jpg')">
+                        <div class="creator-badge">
+                            <i class="fas fa-user-edit mr-1"></i> 李华
+                        </div>
+                        <div class="backer-count">
+                            <i class="fas fa-users mr-1"></i> 200支持者
+                        </div>
+                        <div class="artwork-content">
+                            <h3 class="font-bold text-xl">《未来之声》电音Livehouse</h3>
+                            <p class="text-sm opacity-90">来自国内外的三个独立乐队</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">演出时间</p>
+                            <p class="font-bold">2025年6月10日</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-500 text-sm">演出地点</p>
+                            <p class="font-bold">上海NOC音乐厅</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between space-x-4">
+                        <button onclick="location.href='project-detail.html?id=future-sound-festival'" class="w-1/2 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                            查看项目
+                        </button>
+                        <button onclick="location.href='ticket-booking.html?id=future-sound-festival'" class="w-1/2 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition">
+                            预定门票
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片3 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover transition duration-300">
+                <div class="relative">
+                    <div class="artwork-card" style="background-image: url('https://cdn.pixabay.com/photo/2015/07/17/22/43/student-849825_1280.jpg')">
+                        <div class="creator-badge">
+                            <i class="fas fa-user-edit mr-1"></i> 王明
+                        </div>
+                        <div class="backer-count">
+                            <i class="fas fa-users mr-1"></i> 180支持者
+                        </div>
+                        <div class="artwork-content">
+                            <h3 class="font-bold text-xl">《青春之光》舞台剧</h3>
+                            <p class="text-sm opacity-90">讲述青春与梦想的故事</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">演出时间</p>
+                            <p class="font-bold">2025年7月5日</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-500 text-sm">演出地点</p>
+                            <p class="font-bold">广州大剧院</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between space-x-4">
+                        <button onclick="location.href='project-detail.html?id=youth-light-drama'" class="w-1/2 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                            查看项目
+                        </button>
+                        <button onclick="location.href='ticket-booking.html?id=youth-light-drama'" class="w-1/2 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition">
+                            预定门票
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <!-- 成功案例 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">成功案例</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- 案例1 -->
+                    <div class="testimonial-card p-6">
+                        <div class="flex items-center mb-4">
+                            <img src="https://randomuser.me/api/portraits/women/32.jpg" class="w-12 h-12 rounded-full">
+                            <div class="ml-4">
+                                <h4 class="font-bold">林小雨</h4>
+                                <p class="text-sm text-gray-500">独立音乐人</p>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex text-yellow-400 mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-700">"通过ArtFund，我成功筹集到了个人专辑的制作资金。平台的专业指导和社区支持让我能够专注于创作，最终完成了我的音乐梦想。"</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <p class="text-sm text-gray-500">项目: <span class="text-indigo-600 font-medium">《雨巷》原创专辑制作</span></p>
+                            <p class="text-sm text-gray-500">筹集金额: <span class="font-medium">¥68,200 / ¥50,000</span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 案例2 -->
+                    <div class="testimonial-card p-6">
+                        <div class="flex items-center mb-4">
+                            <img src="https://randomuser.me/api/portraits/men/54.jpg" class="w-12 h-12 rounded-full">
+                            <div class="ml-4">
+                                <h4 class="font-bold">张墨</h4>
+                                <p class="text-sm text-gray-500">当代艺术家</p>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex text-yellow-400 mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-gray-700">"我的首次个人画展通过ArtFund获得了超出预期的支持。不仅筹集到了展览资金，还通过平台认识了许多艺术爱好者和收藏家。"</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <p class="text-sm text-gray-500">项目: <span class="text-indigo-600 font-medium">"墨色边界"当代水墨展</span></p>
+                            <p class="text-sm text-gray-500">筹集金额: <span class="font-medium">¥112,500 / ¥80,000</span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- 案例3 -->
+                    <div class="testimonial-card p-6">
+                        <div class="flex items-center mb-4">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full">
+                            <div class="ml-4">
+                                <h4 class="font-bold">陈晓彤</h4>
+                                <p class="text-sm text-gray-500">戏剧导演</p>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex text-yellow-400 mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p class="text-gray-700">"我们的实验话剧项目在ArtFund上获得了巨大成功。平台的艺术社区非常活跃，支持者们不仅提供资金，还积极参与创作讨论，让作品更加完善。"</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <p class="text-sm text-gray-500">项目: <span class="text-indigo-600 font-medium">《镜中人》实验话剧巡演</span></p>
+                            <p class="text-sm text-gray-500">筹集金额: <span class="font-medium">¥156,800 / ¥120,000</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12">
+                    <button class="px-8 py-3 border-2 border-indigo-600 text-indigo-600 rounded-full font-bold hover:bg-indigo-50 transition">
+                        查看更多成功案例
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 如何运作 -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">ArtFund如何运作</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6">
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-lightbulb text-indigo-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">1. 发起项目</h3>
+                        <p class="text-gray-600">艺术家提交项目创意，设定筹资目标和期限。我们的团队会提供专业指导，帮助完善项目页面。</p>
+                    </div>
+                    
+                    <div class="text-center p-6">
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-share-alt text-indigo-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">2. 分享推广</h3>
+                        <p class="text-gray-600">通过社交媒体、邮件和我们的平台社区分享你的项目，吸引支持者参与。</p>
+                    </div>
+                    
+                    <div class="text-center p-6">
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-trophy text-indigo-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">3. 实现梦想</h3>
+                        <p class="text-gray-600">达到筹资目标后获得资金，开始创作。完成后向支持者兑现承诺，分享成果。</p>
+                    </div>
+                </div>
+                
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <!-- 卡片1 -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                        <div class="flex flex-col items-center">
+                            <!-- 图片在上 -->
+                            <div class="w-full h-56">
+                                <img src="https://cdn.pixabay.com/photo/2016/06/11/15/51/heart-1450302_1280.jpg" class="w-full h-full object-cover" alt="资金发送">
+                            </div>
+                            <!-- 文字在下 -->
+                            <div class="p-6 text-center">
+                                <h3 class="text-2xl font-bold mb-4">ArtFund如何将筹集的资金发送给艺术家？</h3>
+                                <p class="text-gray-600 mb-4">当项目成功达到筹资目标后，ArtFund会将资金安全地发送给艺术家，并提供资金使用的指导和支持。</p>
+                                <button class="px-6 py-3 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition">
+                                    了解更多 <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- 卡片2 -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                        <div class="flex flex-col items-center">
+                            <!-- 图片在上 -->
+                            <div class="w-full h-56">
+                                <img src="https://cdn.pixabay.com/photo/2014/03/31/17/50/class-302116_1280.jpg" class="w-full h-full object-cover" alt="艺术创想">
+                            </div>
+                            <!-- 文字在下 -->
+                            <div class="p-6 text-center">
+                                <h3 class="text-2xl font-bold mb-4">ArtFund社区鼓励什么样的艺术创想？</h3>
+                                <p class="text-gray-600 mb-4">我们鼓励创新、有影响力的艺术创想，包括音乐、美术、戏剧等多种形式，为社区带来更多灵感。</p>
+                                <button class="px-6 py-3 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition">
+                                    了解更多 <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- 卡片3 -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                        <div class="flex flex-col items-center">
+                            <!-- 图片在上 -->
+                            <div class="w-full h-56">
+                                <img src="https://cdn.pixabay.com/photo/2022/05/04/02/29/calligraphy-7173006_1280.jpg" class="w-full h-full object-cover" alt="艺术家创作">
+                            </div>
+                            <!-- 文字在下 -->
+                            <div class="p-6 text-center">
+                                <h3 class="text-2xl font-bold mb-4">作为发起者，你需要了解发起项目前的准备工作！</h3>
+                                <p class="text-gray-600 mb-4">在发起项目前，请获取我们的文件，并根据社区条例和政策来敲定您的项目。此举既是项目顺利通过的前提，又是维护和建设ArtFund社区的共同努力。</p>
+                                <button class="px-6 py-3 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition">
+                                    阅读须知 <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+<style>
+    /* 放大卡片样式 */
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: scale(1.05); /* 放大效果 */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* 增加阴影 */
+    }
+
+    /* 调整卡片图片高度 */
+    .card-hover .h-56 {
+        height: 14rem; /* 固定图片高度 */
+    }
+</style>
+        </section>
+
+        <!-- 常见问题 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">常见问题</h2>
+                
+                <div class="max-w-3xl mx-auto">
+                    <div class="mb-6 border-b pb-4">
+                        <button class="faq-toggle flex justify-between items-center w-full text-left font-bold text-lg">
+                            <span>ArtFund与其他众筹平台有什么不同？</span>
+                            <i class="fas fa-plus text-indigo-600"></i>
+                        </button>
+                        <div class="faq-content mt-3 text-gray-600 hidden">
+                            ArtFund专注于艺术领域，为音乐、美术、戏剧等艺术活动提供专业化的众筹服务。我们拥有艺术行业的专业团队，能为创作者提供针对性的建议和支持。此外，我们的社区主要由艺术爱好者和收藏家组成，能为项目带来更精准的受众。
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6 border-b pb-4">
+                        <button class="faq-toggle flex justify-between items-center w-full text-left font-bold text-lg">
+                            <span>作为发起者，发起项目需要支付费用吗？</span>
+                            <i class="fas fa-plus text-indigo-600"></i>
+                        </button>
+                        <div class="faq-content mt-3 text-gray-600 hidden">
+                            发起项目是完全免费的。只有在项目成功筹集到目标金额后，我们才会收取5%的平台服务费。
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6 border-b pb-4">
+                        <button class="faq-toggle flex justify-between items-center w-full text-left font-bold text-lg">
+                            <span>作为支持者，支持艺术项目能获得什么回报？</span>
+                            <i class="fas fa-plus text-indigo-600"></i>
+                        </button>
+                        <div class="faq-content mt-3 text-gray-600 hidden">
+                            ArtFund的不会对项目发起者做出任何硬性的回报要求，但鼓励项目发起者在项目完成后为支持者们给予力所能及的回报。可能的回报方案通常包括作品数字版、实体专辑/画册、活动门票、创作者签名纪念品、特别鸣谢、见面会等。
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6 border-b pb-4">
+                        <button class="faq-toggle flex justify-between items-center w-full text-left font-bold text-lg">
+                            <span>如果项目没有达到筹资目标会怎样？</span>
+                            <i class="fas fa-plus text-indigo-600"></i>
+                        </button>
+                        <div class="faq-content mt-3 text-gray-600 hidden">
+                            ArtFund采用"全有或全无"和"先认捐后扣费"模式。支持者在认捐后无需立刻支付，直到项目达成募捐数额。如果项目在期限内未达到募捐目标，ArtFund不会收取支持人的认捐资金，项目发起人不会获得任何资金。这种模式保护了支持者的利益，也激励创作者设定合理的筹资目标。
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <button class="faq-toggle flex justify-between items-center w-full text-left font-bold text-lg">
+                            <span>如何确保项目发起人会兑现承诺？</span>
+                            <i class="fas fa-plus text-indigo-600"></i>
+                        </button>
+                        <div class="faq-content mt-3 text-gray-600 hidden">
+                            我们对所有项目发起人进行身份验证，并要求提供详细的项目计划和预算。平台会定期跟进项目进展，并要求发起人更新状态。如果项目出现严重延迟或问题，我们的支持团队会介入协助解决。此外，支持者可以通过分享他们的体验，帮助社区识别可靠的项目、艺术家和发起人。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 订阅更新 -->
+        <section class="py-16 gradient-bg text-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold mb-6">订阅艺术资讯</h2>
+                    <p class="text-xl mb-8">获取最新艺术项目资讯、创作者故事和独家活动邀请</p>
+                    
+                    <div class="flex flex-col sm:flex-row max-w-md mx-auto sm:max-w-xl">
+                        <input type="email" placeholder="您的电子邮箱" class="px-4 py-3 rounded-l-full sm:rounded-r-none rounded-r-full mb-2 sm:mb-0 flex-grow text-gray-900 focus:outline-none">
+                        <button class="px-6 py-3 bg-white text-indigo-600 rounded-r-full sm:rounded-l-none rounded-l-full font-bold hover:bg-gray-100 transition whitespace-nowrap">
+                            订阅更新
+                        </button>
+                    </div>
+                    
+                    <p class="text-sm mt-4 opacity-80">我们尊重您的隐私，不会分享您的邮箱地址</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 分类页面 -->
+    <div id="category-page" class="page">
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button class="back-button mr-4 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="text-3xl font-bold" id="category-title">音乐演出</h2>
+                </div>
+                
+                <p class="text-gray-600 mb-8" id="category-description">音乐会、演唱会、Livehouse等各类音乐演出项目</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="category-projects">
+                    <!-- 项目将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 项目详情页面 -->
+    <div id="project-detail" class="page">
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button class="back-button mr-4 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="text-3xl font-bold" id="project-title">项目标题</h2>
+                </div>
+                
+                <div class="project-detail-container">
+                    <div class="project-content">
+                        <div class="mb-8">
+                            <div class="artwork-card rounded-xl mb-6" id="project-image">
+                                <!-- 背景图片将通过JavaScript设置 -->
+                            </div>
+                            
+                            <div class="bg-gray-50 p-6 rounded-xl mb-6">
+                                <h3 class="text-xl font-bold mb-4">关于这个项目</h3>
+                                <p class="text-gray-700 mb-4" id="project-description">项目描述将通过JavaScript加载</p>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <p class="text-gray-500 text-sm">目标金额</p>
+                                        <p class="font-bold" id="project-goal">¥0</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-sm">已筹集</p>
+                                        <p class="font-bold" id="project-raised">¥0</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-sm">支持者</p>
+                                        <p class="font-bold" id="project-backers">0</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-sm">剩余时间</p>
+                                        <p class="font-bold" id="project-days-left">0天</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="progress-bar mb-2">
+                                    <div class="progress-fill" id="project-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span id="project-percentage">0%</span>
+                                    <span id="project-days-remaining"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-6 rounded-xl mb-6">
+                                <h3 class="text-xl font-bold mb-4">项目详情</h3>
+                                <div id="project-details">
+                                    <!-- 项目详情内容将通过JavaScript加载 -->
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold mb-4">支持选项</h3>
+                                <div id="reward-options">
+                                    <!-- 支持选项将通过JavaScript加载 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-sidebar">
+                        <div class="bg-gray-50 p-6 rounded-xl sticky top-6">
+                            <h3 class="text-xl font-bold mb-4">发起人信息</h3>
+                            <div class="flex items-center mb-4" id="creator-info">
+                                <!-- 发起人信息将通过JavaScript加载 -->
+                            </div>
+                            
+                            <div id="team-members">
+                                <!-- 团队成员信息将通过JavaScript加载 -->
+                            </div>
+                            
+                            <button class="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition mt-6" id="support-project-btn">
+                                支持这个项目
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 平台指南页面 -->
+    <div id="guidelines" class="page">
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button class="back-button mr-4 text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="text-3xl font-bold">ArtFund平台指南</h2>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="guideline-section">
+                        <h3 class="text-2xl font-bold mb-4">项目发起指南</h3>
+                        <div class="prose max-w-none">
+                            <p>在ArtFund上发起项目需要遵循以下指南，以确保项目符合平台要求并能够成功筹集资金：</p>
+                            <ul class="list-disc pl-6 mt-4 space-y-2">
+                                <li>项目必须与艺术相关，包括但不限于音乐、美术、戏剧、舞蹈、电影等艺术形式</li>
+                                <li>项目必须有明确的创作目标和资金使用计划</li>
+                                <li>项目必须设定合理的筹资目标和期限</li>
+                                <li>项目发起人必须提供真实有效的身份信息</li>
+                                <li>项目必须提供详细的创作计划和执行时间表</li>
+                                <li>项目必须明确说明对支持者的回报方案（如适用）</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="guideline-section">
+                        <h3 class="text-2xl font-bold mb-4">社区行为准则</h3>
+                        <div class="prose max-w-none">
+                            <p>ArtFund致力于建立一个积极、友善的艺术社区，所有用户必须遵守以下行为准则：</p>
+                            <ul class="list-disc pl-6 mt-4 space-y-2">
+                                <li>尊重所有社区成员，禁止任何形式的歧视、骚扰或攻击性言论</li>
+                                <li>保持诚实和透明，禁止虚假陈述或误导性信息</li>
+                                <li>保护知识产权，禁止侵犯他人版权或商标权的行为</li>
+                                <li>禁止发布垃圾信息或进行未经授权的商业推广</li>
+                                <li>禁止任何形式的欺诈或不诚实行为</li>
+                                <li>遵守所有适用的法律法规</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="guideline-section">
+                        <h3 class="text-2xl font-bold mb-4">资金管理政策</h3>
+                        <div class="prose max-w-none">
+                            <p>ArtFund采用"全有或全无"的筹资模式，并有以下资金管理政策：</p>
+                            <ul class="list-disc pl-6 mt-4 space-y-2">
+                                <li>项目必须在设定的期限内达到或超过筹资目标才能获得资金</li>
+                                <li>如果项目未达到筹资目标，所有资金将退还给支持者</li>
+                                <li>平台收取成功项目筹集金额的5%作为服务费</li>
+                                <li>支付处理方（如支付宝、微信支付等）可能收取额外手续费</li>
+                                <li>项目发起人有责任按照承诺使用资金并向支持者提供回报</li>
+                                <li>平台有权对可疑项目进行审核并暂停资金发放</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="guideline-section">
+                        <h3 class="text-2xl font-bold mb-4">项目审核流程</h3>
+                        <div class="prose max-w-none">
+                            <p>所有提交的项目都将经过以下审核流程：</p>
+                            <ol class="list-decimal pl-6 mt-4 space-y-2">
+                                <li>初步审核：检查项目是否符合基本要求和指南</li>
+                                <li>内容审核：评估项目创意、可行性和资金使用计划</li>
+                                <li>身份验证：核实项目发起人的真实身份</li>
+                                <li>法律审查：确保项目不违反任何法律法规</li>
+                                <li>最终批准：项目获得批准并上线</li>
+                            </ol>
+                            <p class="mt-4">审核通常需要3-5个工作日。我们建议您在计划上线日期前至少一周提交项目。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <button class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition back-button">
+                            返回首页
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-palette text-2xl"></i>
+                        <span class="text-xl font-bold">ArtFund</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">专注于艺术活动的众筹平台，帮助艺术家实现创作梦想。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">探索</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white" data-page="explore">艺术项目</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white" data-page="success">成功案例</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">新上线项目</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">即将结束项目</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">全部类别</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">关于</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white" data-page="about">关于ArtFund</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">团队</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">工作机会</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">媒体报道</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">合作伙伴</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-lg mb-4">支持</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">帮助中心</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white" data-page="guidelines">发起指南</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">支持者指南</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">社区准则</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2023 ArtFund. 保留所有权利。</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">隐私政策</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">使用条款</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Cookie政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 支持项目模态框 -->
+    <div id="support-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 invisible">
+        <div class="modal-content bg-white rounded-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">支持项目</h3>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" class="w-12 h-12 rounded-full">
+                        <div class="ml-4">
+                            <h4 class="font-bold">林小雨</h4>
+                            <p class="text-sm text-gray-500">独立音乐人</p>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">夏日独立音乐节2023</h4>
+                    <p class="text-gray-600 mb-4">10个独立乐队联合演出，为期两天的音乐盛宴</p>
+                    
+                    <div class="progress-bar mb-2">
+                        <div class="progress-fill" style="width: 72%"></div>
+                    </div>
+                    <div class="flex justify-between text-sm mb-4">
+                        <span>已筹 ¥72,540</span>
+                        <span>目标 ¥100,000</span>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="font-bold mb-4">选择支持金额</h4>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button class="reward-option py-3 px-4 border border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition">
+                            <p class="font-bold">¥50</p>
+                            <p class="text-sm text-gray-600">数字专辑+鸣谢</p>
+                        </button>
+                        <button class="reward-option py-3 px-4 border border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition">
+                            <p class="font-bold">¥150</p>
+                            <p class="text-sm text-gray-600">实体专辑+门票</p>
+                        </button>
+                        <button class="reward-option py-3 px-4 border border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition">
+                            <p class="font-bold">¥300</p>
+                            <p class="text-sm text-gray-600">VIP门票+签名</p>
+                        </button>
+                        <button class="reward-option py-3 px-4 border border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition">
+                            <p class="font-bold">¥500</p>
+                            <p class="text-sm text-gray-600">后台通行+见面</p>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">或输入自定义金额</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2">¥</span>
+                            <input type="number" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="输入金额">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="font-bold mb-4">支付方式</h4>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500">
+                            <input type="radio" name="payment" class="text-indigo-600 focus:ring-indigo-500" checked>
+                            <div class="flex items-center">
+                                <i class="fab fa-alipay text-2xl text-blue-500 mr-2"></i>
+                                <span>支付宝</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500">
+                            <input type="radio" name="payment" class="text-indigo-600 focus:ring-indigo-500">
+                            <div class="flex items-center">
+                                <i class="fab fa-weixin text-2xl text-green-500 mr-2"></i>
+                                <span>微信支付</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500">
+                            <input type="radio" name="payment" class="text-indigo-600 focus:ring-indigo-500">
+                            <div class="flex items-center">
+                                <i class="far fa-credit-card text-2xl text-gray-600 mr-2"></i>
+                                <span>信用卡/借记卡</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="flex items-start">
+                        <input type="checkbox" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-2 text-sm text-gray-600">我同意ArtFund的<a href="#" class="text-indigo-600 hover:underline">使用条款</a>和<a href="#" class="text-indigo-600 hover:underline">隐私政策</a></span>
+                    </label>
+                </div>
+                
+                <button class="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                    确认支持
+                </button>
+            </div>
+        </div>
+    </div>
+   <body>
+</html>

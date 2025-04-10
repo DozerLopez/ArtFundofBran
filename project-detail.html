@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><script>window.huggingface={variables:{"SPACE_CREATOR_USER_ID":"67dc1e2632aedc68c4d17b08"}};</script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ArtFund - 艺术活动众筹平台</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+            
+            body {
+                font-family: 'Noto Sans SC', sans-serif;
+                background-color: #f8f9fa;
+            }
+            
+            .gradient-bg {
+                background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            }
+            
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            
+            .progress-bar {
+                height: 8px;
+                border-radius: 4px;
+                background-color: #e9ecef;
+            }
+            
+            .progress-fill {
+                height: 100%;
+                border-radius: 4px;
+                background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+                transition: width 0.5s ease;
+            }
+            
+            .category-icon {
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                margin-bottom: 10px;
+            }
+            
+            .artwork-card {
+                transition: all 0.3s ease;
+                background-size: cover;
+                background-position: center;
+                height: 250px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .artwork-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+            }
+            
+            .artwork-content {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 20px;
+                color: white;
+            }
+            
+            .nav-link {
+                position: relative;
+            }
+            
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background-color: white;
+                transition: width 0.3s ease;
+            }
+            
+            .nav-link:hover::after {
+                width: 100%;
+            }
+            
+            .testimonial-card {
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+            
+            .testimonial-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .creator-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: bold;
+                color: #6a11cb;
+            }
+            
+            .backer-count {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+            }
+            
+            .modal {
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+            
+            .modal-content {
+                transform: translateY(20px);
+                transition: transform 0.3s ease;
+            }
+            
+            .modal.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .modal.active .modal-content {
+                transform: translateY(0);
+            }
+    
+            .search-bar {
+                transition: all 0.3s ease;
+                max-width: 300px;
+            }
+    
+            .search-bar:focus-within {
+                max-width: 400px;
+            }
+    
+            /* Page transition */
+            .page {
+                display: none;
+            }
+            
+            .page.active {
+                display: block;
+                animation: fadeIn 0.5s ease;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+    
+            /* Project detail layout */
+            .project-detail-container {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            @media (min-width: 1024px) {
+                .project-detail-container {
+                    grid-template-columns: 2fr 1fr;
+                }
+            }
+    
+            /* Guidelines page */
+            .guideline-section {
+                margin-bottom: 3rem;
+            }
+            
+            .guideline-section h3 {
+                border-bottom: 2px solid #6a11cb;
+                padding-bottom: 0.5rem;
+                margin-bottom: 1rem;
+            }
+        </style>
+</head>
+<body>
+     <!-- 导航栏 -->
+     <nav class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex justify-between items-center mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-palette text-2xl"></i>
+                        <span class="text-xl font-bold">ArtFund</span>
+                    </div>
+                    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="search-bar relative flex-grow">
+                        <input type="text" placeholder="搜索艺术项目..." class="w-full pl-10 pr-4 py-2 rounded-full text-gray-900 focus:outline-none">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                    </div>
+                    <button class="px-4 py-2 rounded-full bg-white text-indigo-600 font-medium hover:bg-gray-100 transition">
+                        登录/注册
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+                <div class="search-bar relative mb-4">
+                    <input type="text" placeholder="搜索艺术项目..." class="w-full pl-10 pr-4 py-2 rounded-full text-gray-900 focus:outline-none">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                </div>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="home">首页</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="explore">探索项目</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="create">发起项目</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="success">成功案例</a>
+                <a href="#" class="nav-link block py-2 px-4 hover:bg-indigo-700 rounded" data-page="about">关于我们</a>
+                <button class="w-full mt-2 px-4 py-2 rounded-full bg-white text-indigo-600 font-medium hover:bg-gray-100 transition">
+                    登录/注册
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto px-4 py-4">
+        <button onclick="history.back()" class="px-6 py-3 mt-5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition transform flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> 返回上一页
+        </button>
+    </div>
+
+    <!-- 项目详情 -->
+    <section class="py-10 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 项目图片 -->
+                <div>
+                    <div class="artwork-card rounded-xl overflow-hidden" id="project-image" style="height: 400px;"></div>
+                </div>
+                <!-- 项目内容 -->
+                <div>
+                    <h1 class="text-4xl font-bold mb-4" id="project-title">加载中...</h1>
+                    <p class="text-gray-600 mb-6" id="project-description">加载中...</p>
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <p class="text-gray-500 text-sm">目标金额</p>
+                            <p class="font-bold" id="project-goal">加载中...</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">已筹金额</p>
+                            <p class="font-bold" id="project-raised">加载中...</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">剩余时间</p>
+                            <p class="font-bold" id="project-days-left">加载中...</p>
+                        </div>
+                    </div>
+                    <div class="progress-bar mb-4">
+                        <div class="progress-fill" id="project-progress" style="width: 0%;"></div>
+                    </div>
+                    <button class="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">
+                        支持这个项目
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 获取 URL 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+
+        // 模拟项目数据
+        const projects = {
+            "summer-music-festival": {
+                title: "仲夏夜梦音乐节·2025",
+                description: "中央音乐学院管弦乐团带来莫扎特、李斯特和门德尔松的经典作品。",
+                goal: "¥500,000",
+                raised: "¥300,000",
+                daysLeft: "15天",
+                progress: "60%",
+                image: "https://cdn.pixabay.com/photo/2022/06/16/10/42/orchestra-7265635_1280.jpg"
+            },
+            "ink-art-exhibition": {
+                title: "当代水墨艺术展",
+                description: "探索传统与创新的边界。",
+                goal: "¥50,000",
+                raised: "¥22,500",
+                daysLeft: "22天",
+                progress: "45%",
+                image: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+            },
+            "city-edge-drama": {
+                title: "原创话剧《城市边缘》",
+                description: "讲述都市青年的生活困境。",
+                goal: "¥80,000",
+                raised: "¥73,600",
+                daysLeft: "8天",
+                progress: "92%",
+                image: "https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+            }
+        };
+
+        // 根据项目 ID 加载数据
+        if (projects[projectId]) {
+            const project = projects[projectId];
+            document.getElementById('project-title').textContent = project.title;
+            document.getElementById('project-description').textContent = project.description;
+            document.getElementById('project-goal').textContent = project.goal;
+            document.getElementById('project-raised').textContent = project.raised;
+            document.getElementById('project-days-left').textContent = project.daysLeft;
+            document.getElementById('project-progress').style.width = project.progress;
+            document.getElementById('project-image').style.backgroundImage = `url(${project.image})`;
+        } else {
+            document.getElementById('project-title').textContent = "项目未找到";
+            document.getElementById('project-description').textContent = "无法加载项目详情，请返回首页。";
+        }
+    </script>
+</body>
+</html>
